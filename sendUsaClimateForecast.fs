@@ -29,7 +29,10 @@ let run ([<TimerTrigger("0 0 17 21 * *")>] myTimer: TimerInfo, log: ILogger) =
         |> Async.RunSynchronously
     
     //Send map to Telegram from NOAA 30-day outlook
-    let weatherMapUri = "https://www.cpc.ncep.noaa.gov/products/predictions/30day/off15_temp.gif"
+    let weatherUri = "https://www.cpc.ncep.noaa.gov/products/predictions/30day/"
+    let noaaHtml = HtmlDocument.Load(weatherUri)
+    let weatherMapImage = noaaHtml.CssSelect("img[src$='temp.gif']").Head.AttributeValue "src"
+    let weatherMapUri = (Uri( Uri(weatherUri), weatherMapImage)).AbsoluteUri
     let res = Http.Request(weatherMapUri, silentHttpErrors=true)
     
     match res.Body with
@@ -38,7 +41,7 @@ let run ([<TimerTrigger("0 0 17 21 * *")>] myTimer: TimerInfo, log: ILogger) =
     
     //Send text of outlook
     let (|Forecast|_|) forecast  =
-        let m = Regex.Match(forecast, "30-DAY.+----",RegexOptions.Singleline)
+        let m = Regex.Match(forecast, "30-DAY.+?(?:----|$)",RegexOptions.Singleline)
         if m.Success then Some m.Value else None
     
     let html = HtmlDocument.Load("https://www.cpc.ncep.noaa.gov/products/predictions/long_range/fxus07.html")

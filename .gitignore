@@ -3,6 +3,7 @@
 
 # Azure Functions localsettings file
 local.settings.json
+__*
 
 # User-specific files
 *.suo
@@ -263,3 +264,5 @@ paket-files/
 __pycache__/
 *.pyc
 .ionide
+.ionide/symbolCache.db
+.ionide/symbolCache.db
