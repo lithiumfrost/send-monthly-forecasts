@@ -1,0 +1,3 @@
+﻿namespace FunctionsInFSharp
+
+type HttpBuilderExtension
